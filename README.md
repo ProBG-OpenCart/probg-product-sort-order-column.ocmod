@@ -55,9 +55,11 @@ Each Sort Order cell contains a number field. When its value changes:
 
 - feat: added inline editing of product Sort Order in the admin product list;
 - feat: added AJAX saving without page reload;
-- feat: added modify-permission and integer validation before saving;
+- feat: added modify-permission and signed integer validation before saving;
 - feat: added visual saving/success/error feedback;
-- feat: update `date_modified` when Sort Order changes.
+- feat: update `date_modified` when Sort Order changes;
+- fix: prevent the Enter key in the inline editor from submitting the surrounding product-list form;
+- fix: restore the previous value when an inline save fails.
 
 ### 1.0.0
 
