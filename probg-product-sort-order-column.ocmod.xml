@@ -34,8 +34,8 @@
 
 			if ($product_id < 1) {
 				$json['error'] = 'Invalid product.';
-			} elseif (!preg_match('/^-?\d+$/', $sort_order)) {
-				$json['error'] = 'Sort Order must be an integer.';
+			} elseif (!preg_match('/^-?\d+$/', $sort_order) || (float)$sort_order < -2147483648 || (float)$sort_order > 2147483647) {
+				$json['error'] = 'Sort Order must be a valid integer.';
 			} else {
 				$this->load->model('catalog/product');
 
@@ -102,6 +102,14 @@
     <operation error="skip">
       <search><![CDATA[// IE and Edge fix!]]></search>
       <add position="before"><![CDATA[
+$('.probg-sort-order').on('keydown', function(e) {
+	if (e.which === 13) {
+		e.preventDefault();
+		$(this).blur();
+		return false;
+	}
+});
+
 $('.probg-sort-order').on('change', function() {
 	var $input = $(this);
 	var $status = $input.siblings('.probg-sort-order-status');
