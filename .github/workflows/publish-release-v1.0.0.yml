@@ -1,0 +1,87 @@
+name: Publish release v1.0.0
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.head_ref == 'feat/initial-product-sort-order-column'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create tag and GitHub release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          API="https://api.github.com/repos/${REPOSITORY}"
+          TARGET_SHA="2bcc62a38ce603cb4544e70d387c07681b141e96"
+
+          if curl --silent --fail \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "${API}/releases/tags/v1.0.0" >/dev/null; then
+            echo "Release v1.0.0 already exists."
+            exit 0
+          fi
+
+          curl --silent --show-error --fail-with-body \
+            -H "Accept: application/vnd.github.raw+json" \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "${API}/contents/probg-product-sort-order-column.ocmod.xml?ref=${TARGET_SHA}" \
+            -o probg-product-sort-order-column.ocmod.xml
+
+          NOTES=$(cat <<'EOF'
+          ## ProBG Product Sort Order Column 1.0.0
+
+          Initial stable release for OpenCart 3.
+
+          ### Features
+          - Adds a **Sort Order / Подредба** column to `Catalog → Products` in the administration.
+          - Displays the current `product.sort_order` value for every product.
+          - Allows ascending and descending sorting by `sort_order`.
+          - Uses OCMOD and does not modify OpenCart core files directly.
+          - Requires no database changes.
+
+          ### Compatibility
+          - OpenCart 3.0.2.0
+          - OpenCart 3.0.3.x, including 3.0.3.9
+          EOF
+          )
+
+          jq -n \
+            --arg tag "v1.0.0" \
+            --arg target "$TARGET_SHA" \
+            --arg name "ProBG Product Sort Order Column 1.0.0" \
+            --arg body "$NOTES" \
+            '{tag_name:$tag,target_commitish:$target,name:$name,body:$body,draft:false,prerelease:false}' \
+            > release-payload.json
+
+          curl --silent --show-error --fail-with-body \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/json" \
+            "${API}/releases" \
+            --data-binary @release-payload.json \
+            > release.json
+
+          RELEASE_ID=$(jq -r '.id' release.json)
+
+          curl --silent --show-error --fail-with-body \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/xml" \
+            "https://uploads.github.com/repos/${REPOSITORY}/releases/${RELEASE_ID}/assets?name=probg-product-sort-order-column.ocmod.xml" \
+            --data-binary @probg-product-sort-order-column.ocmod.xml \
+            >/dev/null
