@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+  <name>ProBG Product Sort Order Column</name>
+  <code>probg_product_sort_order_column</code>
+  <version>1.0.0</version>
+  <author>ProBG</author>
+  <link>https://probg.com/</link>
+
+  <file path="admin/controller/catalog/product.php">
+    <operation error="skip">
+      <search><![CDATA['quantity'   => $result['quantity'],]]></search>
+      <add position="after"><![CDATA[
+				'sort_order' => $result['sort_order'],
+      ]]></add>
+    </operation>
+  </file>
+
+  <file path="admin/view/template/catalog/product_list.twig">
+    <operation error="skip">
+      <search><![CDATA[<td class="text-left">{% if sort == 'p.status' %}]]></search>
+      <add position="before"><![CDATA[
+                      <td class="text-right">{% if sort == 'p.sort_order' %} <a href="{{ sort_order }}" class="{{ order|lower }}">{{ entry_sort_order }}</a> {% else %} <a href="{{ sort_order }}">{{ entry_sort_order }}</a> {% endif %}</td>
+      ]]></add>
+    </operation>
+
+    <operation error="skip">
+      <search><![CDATA[<td class="text-left">{{ product.status }}</td>]]></search>
+      <add position="before"><![CDATA[
+                    <td class="text-right">{{ product.sort_order }}</td>
+      ]]></add>
+    </operation>
+
+    <operation error="skip">
+      <search><![CDATA[colspan="8"]]></search>
+      <add position="replace"><![CDATA[colspan="9"]]></add>
+    </operation>
+  </file>
+</modification>
