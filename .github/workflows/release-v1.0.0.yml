@@ -1,0 +1,54 @@
+name: Release v1.0.0
+
+on:
+  push:
+    branches:
+      - feat/initial-product-sort-order-column
+    paths:
+      - .github/workflows/release-v1.0.0.yml
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release asset
+        uses: actions/checkout@v4
+
+      - name: Create tag and GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_SHA: 2bcc62a38ce603cb4544e70d387c07681b141e96
+        run: |
+          set -euo pipefail
+
+          if gh release view v1.0.0 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release v1.0.0 already exists; nothing to do."
+            exit 0
+          fi
+
+          cat > release-notes.md <<'EOF'
+          ## ProBG Product Sort Order Column 1.0.0
+
+          Initial stable release for OpenCart 3.
+
+          ### Features
+          - Adds a **Sort Order / Подредба** column to `Catalog → Products` in the administration.
+          - Displays the current `product.sort_order` value for every product.
+          - Allows ascending and descending sorting by `sort_order`.
+          - Uses OCMOD and does not modify OpenCart core files directly.
+          - Requires no database changes.
+
+          ### Compatibility
+          - OpenCart 3.0.2.0
+          - OpenCart 3.0.3.x, including 3.0.3.9
+          EOF
+
+          gh release create v1.0.0 \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$TARGET_SHA" \
+            --title "ProBG Product Sort Order Column 1.0.0" \
+            --notes-file release-notes.md \
+            "probg-product-sort-order-column.ocmod.xml#probg-product-sort-order-column.ocmod.xml"
