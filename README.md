@@ -1,5 +1,7 @@
 # ProBG Product Sort Order Column
 
+[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-Revolut-191C1F?logo=revolut&logoColor=white)](https://revolut.me/vtotev)
+
 OCMOD modification for OpenCart 3 that adds a **Sort Order** column to the admin product list and allows the value to be edited directly from the list.
 
 ## Features
