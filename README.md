@@ -25,11 +25,23 @@ Designed for OpenCart 3.x and checked against the standard structure of:
 
 The modification uses stable controller, model and Twig locations shared by these OpenCart 3 versions.
 
+## Installation package
+
+The ready-to-install package for version **1.1.0** is available in:
+
+`dist/probg-product-sort-order-column-1.1.0.ocmod.zip`
+
+The archive contains `install.xml` in its root and can be uploaded directly through the OpenCart Extension Installer.
+
+SHA-256:
+
+`abf4d5c4feaa5c0ea3a3d2b0557b6f987136697aff136100ff2d1bc2000be172`
+
 ## Installation
 
 1. Open the OpenCart administration panel.
 2. Go to **Extensions → Installer**.
-3. Upload `probg-product-sort-order-column.ocmod.zip`.
+3. Upload `dist/probg-product-sort-order-column-1.1.0.ocmod.zip`.
 4. Go to **Extensions → Modifications**.
 5. Click **Refresh**.
 6. Clear the Theme/SASS cache from Dashboard → Developer Settings if necessary.
@@ -59,7 +71,8 @@ Each Sort Order cell contains a number field. When its value changes:
 - feat: added visual saving/success/error feedback;
 - feat: update `date_modified` when Sort Order changes;
 - fix: prevent the Enter key in the inline editor from submitting the surrounding product-list form;
-- fix: restore the previous value when an inline save fails.
+- fix: restore the previous value when an inline save fails;
+- chore: added the ready-to-install OpenCart `.ocmod.zip` package under `dist/`.
 
 ### 1.0.0
 
