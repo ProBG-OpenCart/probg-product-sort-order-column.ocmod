@@ -1,5 +1,11 @@
 # ProBG Product Sort Order Column
 
+## Подкрепете разработката
+
+Ако модулът ви е полезен, можете да подкрепите неговата разработка чрез Revolut:
+
+[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-Revolut-0075EB?style=for-the-badge&logo=revolut&logoColor=white)](https://revolut.me/vtotev)
+
 OCMOD модификатор за OpenCart 3, който добавя колоната **„Подредба“** в административния списък с продукти и позволява стойността да се редактира директно от списъка.
 
 ## Възможности
