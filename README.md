@@ -2,7 +2,11 @@
 
 OCMOD modification for OpenCart 3 that adds a **Sort Order** column to the admin product list and allows the value to be edited directly from the list.
 
-[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-Revolut-191C1F?style=for-the-badge)](https://revolut.me/vtotev)
+## Support development
+
+If this module is useful to you, you can support its development through Revolut:
+
+[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-Revolut-0075EB?style=for-the-badge&logo=revolut&logoColor=white)](https://revolut.me/vtotev)
 
 ## Features
 
