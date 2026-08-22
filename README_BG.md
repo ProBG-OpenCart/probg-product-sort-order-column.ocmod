@@ -25,11 +25,23 @@ OCMOD модификатор за OpenCart 3, който добавя колон
 
 Модификаторът използва стабилни участъци от controller, model и Twig файловете, общи за тези версии на OpenCart 3.
 
+## Инсталационен пакет
+
+Готовият инсталационен пакет за версия **1.1.0** се намира в:
+
+`dist/probg-product-sort-order-column-1.1.0.ocmod.zip`
+
+Архивът съдържа `install.xml` в основната си директория и може да бъде качен директно през OpenCart Extension Installer.
+
+SHA-256:
+
+`abf4d5c4feaa5c0ea3a3d2b0557b6f987136697aff136100ff2d1bc2000be172`
+
 ## Инсталация
 
 1. Влезте в администрацията на OpenCart.
 2. Отворете **Extensions → Installer**.
-3. Качете файла `probg-product-sort-order-column.ocmod.zip`.
+3. Качете файла `dist/probg-product-sort-order-column-1.1.0.ocmod.zip`.
 4. Отворете **Extensions → Modifications**.
 5. Натиснете бутона **Refresh**.
 6. При нужда изчистете Theme/SASS cache от Dashboard → Developer Settings.
@@ -65,7 +77,8 @@ OCMOD модификатор за OpenCart 3, който добавя колон
 - feat: добавена визуална индикация при запис, успех и грешка;
 - feat: обновява се `date_modified` при промяна на подредбата;
 - fix: предотвратено е изпращането на основната форма при натискане на Enter в полето за подредба;
-- fix: при неуспешен AJAX запис се възстановява предишната стойност.
+- fix: при неуспешен AJAX запис се възстановява предишната стойност;
+- chore: добавен е готовият OpenCart `.ocmod.zip` инсталационен пакет в `dist/`.
 
 ### 1.0.0
 
