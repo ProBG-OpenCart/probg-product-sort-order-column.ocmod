@@ -2,7 +2,7 @@
 <modification>
   <name>ProBG Product Sort Order Column</name>
   <code>probg_product_sort_order_column</code>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <author>ProBG</author>
   <link>https://probg.com/</link>
 
@@ -11,6 +11,65 @@
       <search><![CDATA['quantity'   => $result['quantity'],]]></search>
       <add position="after"><![CDATA[
 				'sort_order' => $result['sort_order'],
+      ]]></add>
+    </operation>
+
+    <operation error="skip">
+      <search><![CDATA[	protected function validateForm() {]]></search>
+      <add position="before"><![CDATA[
+	public function updateProductSortOrder() {
+		$this->load->language('catalog/product');
+
+		$json = array();
+
+		if (!$this->user->hasPermission('modify', 'catalog/product')) {
+			$json['error'] = $this->language->get('error_permission');
+		} elseif ($this->request->server['REQUEST_METHOD'] != 'POST') {
+			$json['error'] = 'Invalid request method.';
+		} elseif (!isset($this->request->post['product_id']) || !isset($this->request->post['sort_order'])) {
+			$json['error'] = 'Missing product or sort order value.';
+		} else {
+			$product_id = (int)$this->request->post['product_id'];
+			$sort_order = trim((string)$this->request->post['sort_order']);
+
+			if ($product_id < 1) {
+				$json['error'] = 'Invalid product.';
+			} elseif (!preg_match('/^-?\d+$/', $sort_order) || (float)$sort_order < -2147483648 || (float)$sort_order > 2147483647) {
+				$json['error'] = 'Sort Order must be a valid integer.';
+			} else {
+				$this->load->model('catalog/product');
+
+				$product_info = $this->model_catalog_product->getProduct($product_id);
+
+				if (!$product_info) {
+					$json['error'] = 'Product not found.';
+				} else {
+					$sort_order = (int)$sort_order;
+
+					$this->model_catalog_product->updateProductSortOrder($product_id, $sort_order);
+
+					$json['success'] = true;
+					$json['sort_order'] = $sort_order;
+				}
+			}
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+      ]]></add>
+    </operation>
+  </file>
+
+  <file path="admin/model/catalog/product.php">
+    <operation error="skip">
+      <search><![CDATA[	public function getTotalProductsByTaxClassId($tax_class_id) {]]></search>
+      <add position="before"><![CDATA[
+	public function updateProductSortOrder($product_id, $sort_order) {
+		$this->db->query("UPDATE " . DB_PREFIX . "product SET sort_order = '" . (int)$sort_order . "', date_modified = NOW() WHERE product_id = '" . (int)$product_id . "'");
+	}
+
       ]]></add>
     </operation>
   </file>
@@ -26,13 +85,76 @@
     <operation error="skip">
       <search><![CDATA[<td class="text-left">{{ product.status }}</td>]]></search>
       <add position="before"><![CDATA[
-                    <td class="text-right">{{ product.sort_order }}</td>
+                    <td class="text-right">
+                      <div class="input-group input-group-sm" style="width: 110px; margin-left: auto;">
+                        <input type="number" value="{{ product.sort_order }}" data-product-id="{{ product.product_id }}" data-original-value="{{ product.sort_order }}" step="1" class="form-control probg-sort-order" />
+                        <span class="input-group-addon probg-sort-order-status"><i class="fa fa-pencil"></i></span>
+                      </div>
+                    </td>
       ]]></add>
     </operation>
 
     <operation error="skip">
       <search><![CDATA[colspan="8"]]></search>
       <add position="replace"><![CDATA[colspan="9"]]></add>
+    </operation>
+
+    <operation error="skip">
+      <search><![CDATA[// IE and Edge fix!]]></search>
+      <add position="before"><![CDATA[
+$('.probg-sort-order').on('keydown', function(e) {
+	if (e.which === 13) {
+		e.preventDefault();
+		$(this).blur();
+		return false;
+	}
+});
+
+$('.probg-sort-order').on('change', function() {
+	var $input = $(this);
+	var $status = $input.siblings('.probg-sort-order-status');
+	var originalValue = $input.data('original-value');
+
+	$input.prop('disabled', true);
+	$status.html('<i class="fa fa-spinner fa-spin"></i>');
+
+	$.ajax({
+		url: 'index.php?route=catalog/product/updateProductSortOrder&user_token={{ user_token }}',
+		type: 'post',
+		dataType: 'json',
+		data: {
+			product_id: $input.data('product-id'),
+			sort_order: $input.val()
+		},
+		success: function(json) {
+			if (json['success']) {
+				$input.val(json['sort_order']);
+				$input.data('original-value', json['sort_order']);
+				$status.html('<i class="fa fa-check text-success"></i>');
+			} else {
+				$input.val(originalValue);
+				$status.html('<i class="fa fa-exclamation-triangle text-danger"></i>');
+
+				if (json['error']) {
+					alert(json['error']);
+				}
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			$input.val(originalValue);
+			$status.html('<i class="fa fa-exclamation-triangle text-danger"></i>');
+		},
+		complete: function() {
+			$input.prop('disabled', false);
+
+			setTimeout(function() {
+				$status.html('<i class="fa fa-pencil"></i>');
+			}, 1500);
+		}
+	});
+});
+
+      ]]></add>
     </operation>
   </file>
 </modification>
