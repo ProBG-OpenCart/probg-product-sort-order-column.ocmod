@@ -2,7 +2,7 @@
 <modification>
   <name>ProBG Product Sort Order Column</name>
   <code>probg_product_sort_order_column</code>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
   <author>ProBG</author>
   <link>https://probg.com/</link>
 
@@ -58,6 +58,47 @@
 		$this->response->setOutput(json_encode($json));
 	}
 
+	public function updateProductQuantity() {
+		$this->load->language('catalog/product');
+
+		$json = array();
+
+		if (!$this->user->hasPermission('modify', 'catalog/product')) {
+			$json['error'] = $this->language->get('error_permission');
+		} elseif ($this->request->server['REQUEST_METHOD'] != 'POST') {
+			$json['error'] = 'Invalid request method.';
+		} elseif (!isset($this->request->post['product_id']) || !isset($this->request->post['quantity'])) {
+			$json['error'] = 'Missing product or quantity value.';
+		} else {
+			$product_id = (int)$this->request->post['product_id'];
+			$quantity = trim((string)$this->request->post['quantity']);
+
+			if ($product_id < 1) {
+				$json['error'] = 'Invalid product.';
+			} elseif (!preg_match('/^-?\d+$/', $quantity) || (float)$quantity < -2147483648 || (float)$quantity > 2147483647) {
+				$json['error'] = 'Quantity must be a valid integer.';
+			} else {
+				$this->load->model('catalog/product');
+
+				$product_info = $this->model_catalog_product->getProduct($product_id);
+
+				if (!$product_info) {
+					$json['error'] = 'Product not found.';
+				} else {
+					$quantity = (int)$quantity;
+
+					$this->model_catalog_product->updateProductQuantity($product_id, $quantity);
+
+					$json['success'] = true;
+					$json['quantity'] = $quantity;
+				}
+			}
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
       ]]></add>
     </operation>
   </file>
@@ -70,6 +111,10 @@
 		$this->db->query("UPDATE " . DB_PREFIX . "product SET sort_order = '" . (int)$sort_order . "', date_modified = NOW() WHERE product_id = '" . (int)$product_id . "'");
 	}
 
+	public function updateProductQuantity($product_id, $quantity) {
+		$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = '" . (int)$quantity . "', date_modified = NOW() WHERE product_id = '" . (int)$product_id . "'");
+	}
+
       ]]></add>
     </operation>
   </file>
@@ -79,6 +124,18 @@
       <search><![CDATA[<td class="text-left">{% if sort == 'p.status' %}]]></search>
       <add position="before"><![CDATA[
                       <td class="text-right">{% if sort == 'p.sort_order' %} <a href="{{ sort_order }}" class="{{ order|lower }}">{{ entry_sort_order }}</a> {% else %} <a href="{{ sort_order }}">{{ entry_sort_order }}</a> {% endif %}</td>
+      ]]></add>
+    </operation>
+
+    <operation error="skip">
+      <search><![CDATA[<td class="text-right">{% if product.quantity <= 0 %} <span class="label label-warning">{{ product.quantity }}</span> {% elseif product.quantity <= 5 %} <span class="label label-danger">{{ product.quantity }}</span> {% else %} <span class="label label-success">{{ product.quantity }}</span> {% endif %}</td>]]></search>
+      <add position="replace"><![CDATA[
+                    <td class="text-right">
+                      <div class="input-group input-group-sm" style="width: 110px; margin-left: auto;">
+                        <input type="number" value="{{ product.quantity }}" data-product-id="{{ product.product_id }}" data-original-value="{{ product.quantity }}" step="1" class="form-control probg-quantity" />
+                        <span class="input-group-addon probg-quantity-status"><i class="fa fa-pencil"></i></span>
+                      </div>
+                    </td>
       ]]></add>
     </operation>
 
@@ -102,57 +159,64 @@
     <operation error="skip">
       <search><![CDATA[// IE and Edge fix!]]></search>
       <add position="before"><![CDATA[
-$('.probg-sort-order').on('keydown', function(e) {
-	if (e.which === 13) {
-		e.preventDefault();
-		$(this).blur();
-		return false;
-	}
-});
-
-$('.probg-sort-order').on('change', function() {
-	var $input = $(this);
-	var $status = $input.siblings('.probg-sort-order-status');
-	var originalValue = $input.data('original-value');
-
-	$input.prop('disabled', true);
-	$status.html('<i class="fa fa-spinner fa-spin"></i>');
-
-	$.ajax({
-		url: 'index.php?route=catalog/product/updateProductSortOrder&user_token={{ user_token }}',
-		type: 'post',
-		dataType: 'json',
-		data: {
-			product_id: $input.data('product-id'),
-			sort_order: $input.val()
-		},
-		success: function(json) {
-			if (json['success']) {
-				$input.val(json['sort_order']);
-				$input.data('original-value', json['sort_order']);
-				$status.html('<i class="fa fa-check text-success"></i>');
-			} else {
-				$input.val(originalValue);
-				$status.html('<i class="fa fa-exclamation-triangle text-danger"></i>');
-
-				if (json['error']) {
-					alert(json['error']);
-				}
-			}
-		},
-		error: function(xhr, ajaxOptions, thrownError) {
-			$input.val(originalValue);
-			$status.html('<i class="fa fa-exclamation-triangle text-danger"></i>');
-		},
-		complete: function() {
-			$input.prop('disabled', false);
-
-			setTimeout(function() {
-				$status.html('<i class="fa fa-pencil"></i>');
-			}, 1500);
+function probgBindInlineProductEditor(selector, statusSelector, route, fieldName) {
+	$(selector).on('keydown', function(e) {
+		if (e.which === 13) {
+			e.preventDefault();
+			$(this).blur();
+			return false;
 		}
 	});
-});
+
+	$(selector).on('change', function() {
+		var $input = $(this);
+		var $status = $input.siblings(statusSelector);
+		var originalValue = $input.data('original-value');
+		var data = {
+			product_id: $input.data('product-id')
+		};
+
+		data[fieldName] = $input.val();
+
+		$input.prop('disabled', true);
+		$status.html('<i class="fa fa-spinner fa-spin"></i>');
+
+		$.ajax({
+			url: 'index.php?route=catalog/product/' + route + '&user_token={{ user_token }}',
+			type: 'post',
+			dataType: 'json',
+			data: data,
+			success: function(json) {
+				if (json['success']) {
+					$input.val(json[fieldName]);
+					$input.data('original-value', json[fieldName]);
+					$status.html('<i class="fa fa-check text-success"></i>');
+				} else {
+					$input.val(originalValue);
+					$status.html('<i class="fa fa-exclamation-triangle text-danger"></i>');
+
+					if (json['error']) {
+						alert(json['error']);
+					}
+				}
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				$input.val(originalValue);
+				$status.html('<i class="fa fa-exclamation-triangle text-danger"></i>');
+			},
+			complete: function() {
+				$input.prop('disabled', false);
+
+				setTimeout(function() {
+					$status.html('<i class="fa fa-pencil"></i>');
+				}, 1500);
+			}
+		});
+	});
+}
+
+probgBindInlineProductEditor('.probg-sort-order', '.probg-sort-order-status', 'updateProductSortOrder', 'sort_order');
+probgBindInlineProductEditor('.probg-quantity', '.probg-quantity-status', 'updateProductQuantity', 'quantity');
 
       ]]></add>
     </operation>
