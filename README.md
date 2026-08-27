@@ -35,23 +35,23 @@ The Quantity cell markup used by the modification is identical in the standard p
 
 ## Installation package
 
-The latest ready-to-install stable package is version **1.1.0** and is available in:
+The ready-to-install package for version **1.2.0** is available in:
 
-`dist/probg-product-sort-order-column-1.1.0.ocmod.zip`
+`dist/probg-product-sort-order-column-1.2.0.ocmod.zip`
 
 The archive contains `install.xml` in its root and can be uploaded directly through the OpenCart Extension Installer.
 
 SHA-256:
 
-`97ab8cccf55cbd9d4d7349f4e6d31695f91897e0a96604c66c2817fe6156215e`
+`acfa83ff6991ac3d4b4d623bb33e6f6c2b47b0603e160ac4da560b552e95f5fa`
 
-Version **1.2.0** is currently represented by the source modification in the feature branch and adds inline Quantity editing. A new installation package should be built from the merged 1.2.0 source before publishing the release.
+Checksums for the available packages are also stored in `dist/SHA256SUMS`.
 
 ## Installation
 
 1. Open the OpenCart administration panel.
 2. Go to **Extensions → Installer**.
-3. Upload the `.ocmod.zip` installation package.
+3. Upload `dist/probg-product-sort-order-column-1.2.0.ocmod.zip`.
 4. Go to **Extensions → Modifications**.
 5. Click **Refresh**.
 6. Clear the Theme/SASS cache from Dashboard → Developer Settings if necessary.
@@ -81,7 +81,8 @@ The Quantity and Sort Order cells use the same inline editing workflow. When a v
 - feat: added modify-permission, product existence and signed integer validation for Quantity changes;
 - feat: update `date_modified` when Quantity changes;
 - refactor: shared the client-side inline editor logic between Sort Order and Quantity;
-- fix: corrected the documented SHA-256 checksum for the rebuilt 1.1.0 installation package.
+- fix: corrected the documented SHA-256 checksum for the rebuilt 1.1.0 installation package;
+- chore: added the ready-to-install OpenCart 1.2.0 `.ocmod.zip` package under `dist/` and updated `SHA256SUMS`.
 
 ### 1.1.0
 
