@@ -1,6 +1,6 @@
 # ProBG Product Sort Order Column
 
-OCMOD modification for OpenCart 3 that adds a **Sort Order** column to the admin product list and allows both **Sort Order** and **Quantity** to be edited directly from the list.
+OCMOD modification for OpenCart 3 that extends the admin product list with **Sort Order**, **Product ID** and **Date Added** columns and allows both **Sort Order** and **Quantity** to be edited directly from the list.
 
 ## Support development
 
@@ -10,6 +10,10 @@ If this module is useful to you, you can support its development through Revolut
 
 ## Features
 
+- displays the `product.product_id` value in a dedicated **Product ID** column;
+- displays the `product.date_added` value in a dedicated **Date Added** column;
+- supports ascending and descending sorting by Product ID;
+- supports ascending and descending sorting by Date Added;
 - displays the `product.sort_order` value for every product;
 - edits Sort Order directly in **Catalog → Products** without opening the product form;
 - edits the product Quantity directly in **Catalog → Products**;
@@ -22,20 +26,21 @@ If this module is useful to you, you can support its development through Revolut
 - supports ascending and descending sorting by Sort Order;
 - does not create or alter database tables;
 - does not modify core files directly;
-- uses OpenCart's standard `sort_order` and `quantity` product fields.
+- uses OpenCart's standard product fields.
 
 ## Compatibility
 
 Designed for OpenCart 3.x and checked against the standard structure of:
 
 - OpenCart 3.0.2.0;
+- OpenCart 3.0.3.7;
 - OpenCart 3.0.3.9.
 
-The Quantity cell markup used by the modification is identical in the standard product list templates of both checked versions. The modification uses stable controller, model and Twig locations shared by these OpenCart 3 versions.
+The modification uses stable controller, model and Twig locations shared by these OpenCart 3 versions.
 
 ## Installation package
 
-The ready-to-install package for version **1.2.0** is available in:
+The latest ready-to-install release package is version **1.2.0** and is available in:
 
 `dist/probg-product-sort-order-column-1.2.0.ocmod.zip`
 
@@ -47,17 +52,19 @@ SHA-256:
 
 Checksums for the available packages are also stored in `dist/SHA256SUMS`.
 
+Version **1.3.0** is currently represented by the source OCMOD XML on the development branch. Its installation package should be generated when the release is prepared.
+
 ## Installation
 
 1. Open the OpenCart administration panel.
 2. Go to **Extensions → Installer**.
-3. Upload `dist/probg-product-sort-order-column-1.2.0.ocmod.zip`.
+3. Upload the `.ocmod.zip` package.
 4. Go to **Extensions → Modifications**.
 5. Click **Refresh**.
 6. Clear the Theme/SASS cache from Dashboard → Developer Settings if necessary.
 7. Open **Catalog → Products**.
 
-A **Sort Order** column is displayed before Status. Both the existing **Quantity** column and the **Sort Order** column contain numeric fields. Change a value and the module saves it automatically.
+The product list contains sortable **Product ID**, **Sort Order** and **Date Added** columns. The existing **Quantity** column and the **Sort Order** column contain numeric fields that are saved automatically when changed.
 
 ## Inline editing
 
@@ -73,6 +80,15 @@ The Quantity and Sort Order cells use the same inline editing workflow. When a v
 8. pressing Enter commits the current field through blur/change and does not submit the surrounding product-list form.
 
 ## Changelog
+
+### 1.3.0
+
+- feat: added a Product ID column to the admin product list;
+- feat: added a Date Added column using `product.date_added`;
+- feat: added ascending/descending sorting by `p.product_id`;
+- feat: added ascending/descending sorting by `p.date_added`;
+- feat: added English and Bulgarian labels for the new columns;
+- fix: updated the no-results row colspan for the three additional columns.
 
 ### 1.2.0
 
