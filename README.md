@@ -36,7 +36,7 @@ Designed for OpenCart 3.x and checked against the standard structure of:
 - OpenCart 3.0.3.7;
 - OpenCart 3.0.3.9.
 
-The modification uses stable controller, model and Twig locations shared by these OpenCart 3 versions.
+The modification uses stable controller, model and Twig locations shared by these OpenCart 3 versions. Starting with 1.3.1, the Product ID header and row cell are anchored to the Image column instead of the product-name cell, improving compatibility with other OCMODs that customize the product title cell.
 
 ## Installation package
 
@@ -51,7 +51,6 @@ SHA-256:
 `d4067104d8f8cd856d638255f8f2dfd010735517c9b90ac747b20d233046d19e`
 
 Checksums for the available packages are also stored in `dist/SHA256SUMS`.
-
 
 ## Installation
 
@@ -79,6 +78,13 @@ The Quantity and Sort Order cells use the same inline editing workflow. When a v
 8. pressing Enter commits the current field through blur/change and does not submit the surrounding product-list form.
 
 ## Changelog
+
+### 1.3.1
+
+- fix: anchor the Product ID header directly after the Image header;
+- fix: anchor the Product ID row cell directly after the product Image cell;
+- fix: prevent column misalignment when another OCMOD replaces or extends the product-name cell in `product_list.twig`;
+- chore: bumped the OCMOD version to `1.3.1`.
 
 ### 1.3.0
 
@@ -109,7 +115,7 @@ The Quantity and Sort Order cells use the same inline editing workflow. When a v
 - feat: update `date_modified` when Sort Order changes;
 - fix: prevent the Enter key in the inline editor from submitting the surrounding product-list form;
 - fix: restore the previous value when an inline save fails;
-- chore: added the ready-to-install OpenCart `.ocmod.zip` package under `dist/`.
+- chore: added the ready-to-install OpenCart `.ocmod.zip` installation package under `dist/`.
 
 ### 1.0.0
 
