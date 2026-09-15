@@ -40,15 +40,15 @@ The modification uses stable controller, model and Twig locations shared by thes
 
 ## Installation package
 
-The latest ready-to-install release package is version **1.3.0** and is available in:
+The latest ready-to-install release package is version **1.3.1** and is available in:
 
-`dist/probg-product-sort-order-column-1.3.0.ocmod.zip`
+`dist/probg-product-sort-order-column-1.3.1.ocmod.zip`
 
 The archive contains `install.xml` in its root and can be uploaded directly through the OpenCart Extension Installer.
 
 SHA-256:
 
-`d4067104d8f8cd856d638255f8f2dfd010735517c9b90ac747b20d233046d19e`
+`67e5a7d078d73af0ccbd9eb781b7baf486c3d0dc20313ce008a75c9a7bb15009`
 
 Checksums for the available packages are also stored in `dist/SHA256SUMS`.
 
@@ -85,6 +85,7 @@ The Quantity and Sort Order cells use the same inline editing workflow. When a v
 - fix: anchor the Product ID row cell directly after the product Image cell;
 - fix: prevent column misalignment when another OCMOD replaces or extends the product-name cell in `product_list.twig`;
 - chore: bumped the OCMOD version to `1.3.1`.
+- chore: added the ready-to-install OpenCart 1.3.1 `.ocmod.zip` package under `dist/` and updated `SHA256SUMS`.
 
 ### 1.3.0
 
