@@ -40,19 +40,18 @@ The modification uses stable controller, model and Twig locations shared by thes
 
 ## Installation package
 
-The latest ready-to-install release package is version **1.2.0** and is available in:
+The latest ready-to-install release package is version **1.3.0** and is available in:
 
-`dist/probg-product-sort-order-column-1.2.0.ocmod.zip`
+`dist/probg-product-sort-order-column-1.3.0.ocmod.zip`
 
 The archive contains `install.xml` in its root and can be uploaded directly through the OpenCart Extension Installer.
 
 SHA-256:
 
-`acfa83ff6991ac3d4b4d623bb33e6f6c2b47b0603e160ac4da560b552e95f5fa`
+`d4067104d8f8cd856d638255f8f2dfd010735517c9b90ac747b20d233046d19e`
 
 Checksums for the available packages are also stored in `dist/SHA256SUMS`.
 
-Version **1.3.0** is currently represented by the source OCMOD XML on the development branch. Its installation package should be generated when the release is prepared.
 
 ## Installation
 
@@ -89,6 +88,7 @@ The Quantity and Sort Order cells use the same inline editing workflow. When a v
 - feat: added ascending/descending sorting by `p.date_added`;
 - feat: added English and Bulgarian labels for the new columns;
 - fix: updated the no-results row colspan for the three additional columns.
+- chore: added the ready-to-install OpenCart 1.3.0 `.ocmod.zip` package under `dist/` and updated `SHA256SUMS`.
 
 ### 1.2.0
 
